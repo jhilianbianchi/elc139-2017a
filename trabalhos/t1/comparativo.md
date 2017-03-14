@@ -15,7 +15,7 @@ Nome: Jhillian Bianchi
 | Fabricante e modelo do(s) processador(es)                 |  Intel Xeon E5-2698v4 20C            |     Intel Core i5-5200U       |
 | Frequência do(s) processador(es)                          |             2.2 ~ 3.6GHz          |        2.2 ~ 2.7GHz       |
 | Memória total                                             |      63,488 GB                 |        6GB         |
-| Tipo(s) de interconexão entre os núcleos/processadores    |             Infiniband EDR          |       ?          |
+| Tipo(s) de interconexão entre os núcleos/processadores    |             Infiniband EDR          |       DMI - Direct Media Interface          |
 | Desempenho Linpack                                        |          3,307 TFlop/s             |        36,54 GFlop/s         |
 
 ### Referências
