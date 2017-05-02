@@ -1,7 +1,7 @@
 //
 //  Este programa MPI tem um erro!
 //  Identifique este erro e corrija-o para que 2 processos
-//  troquem mensagens corretamente.
+//  possam trocar mensagens.
 //  
 //  Uso: mpirun -np 2 <prog>
 //  
@@ -15,7 +15,7 @@ int main(int argc,char *argv[])
    int inmsg, outmsg = 100;
    MPI_Status stat;
 
-   MPI_Init(&argc, &argv);
+   MPI_Init(&argc,&argv);
    MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
@@ -40,4 +40,5 @@ int main(int argc,char *argv[])
       printf("Enviei mensagem para processo %d...\n", dest);
    }
 
+   MPI_Finalize();
 }
