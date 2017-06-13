@@ -187,7 +187,7 @@ int main(int argc, char** argv) {
 		//printf("Vou abrir o txt...\n");
 		m = lerTxt();
 		start_time = wtime();
-		//Sequencial(m);
+		Sequencial(m);
 		end_time = wtime();
 		printf("Tempo Sequencial: %ld usec\n", (long)(end_time - start_time));
 	}
