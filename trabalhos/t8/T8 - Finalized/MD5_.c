@@ -5,6 +5,7 @@
 #include <sys/time.h>
 #include <stdbool.h>
 #include <string.h>
+#include <unistd.h>
 
 #define TAM_LINHA 34
 #define SIZE 1024
@@ -24,8 +25,12 @@ long wtime()
 }
 
 Matriz lerTxt() {
+	char cwd[1024];
+    	getcwd(cwd, sizeof(cwd));
+	strcat(cwd, "crackme.txt");
+	printf("%s\n", cwd);	
 	Matriz m;
-	FILE* fp = fopen("/home/jhillian/mdcrack-1.2/crackme.txt", "r");
+	FILE* fp = fopen(cwd, "r");
 	if (fp == NULL) return m;
 	printf("Arquivo aberto\n");
 
@@ -52,7 +57,10 @@ void Descriptografa(char* texto) {
 	char linha[114 + TAM_LINHA];
 	char buffer[SIZE];
 	char* found = (char*) malloc(sizeof(char)*20);
-	strcpy(linha, "/home/jhillian/mdcrack-1.2/bin/mdcrack -M MD5 -s abcdefghijklmnopqrstuvwxyz ");
+	char cwd[1024];
+    	getcwd(cwd, sizeof(cwd));
+	strcat(cwd,"bin/mdcrack -M MD5 -s abcdefghijklmnopqrstuvwxyz ");
+	strcpy(linha, cwd);
 	strcat(linha, texto);
 	strcat(linha, " | grep \"Collision\" ");
 	out = popen(linha, "r");
