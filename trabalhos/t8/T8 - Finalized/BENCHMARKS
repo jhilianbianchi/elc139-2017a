@@ -1,0 +1,218 @@
+========================================
+Various Benchmarks performed in the past
+========================================
+
+NOte: 
+send your benchmark scores, questions, ideas  to c3rb3r@hotmail.com. 
+I'm particularly looking for "high speed configuration benchmarks" but others are welcomed too.
+Try bench.sh from the mdcrack's root directory.
+
+
+
+
+Template:
+
+    CPU/mhz
+    system 
+    mdcrack version	
+    duration       
+    average md5 speed (hashes/second)
+    average md4 speed (hashes/second)
+    compilator used
+
+===
+
+    
+     
+    PIII 500
+    Linux 2.2.x
+    mdcrack 0.9.5 
+    5 seconds
+    1 351 020
+	X
+    GNU C
+
+
+    UltraSparc IIi 360
+    solaris 2.5.6
+    mdcrack 0.9.5
+    5 seconds
+    810 341
+	X
+    GNU C
+
+
+    K6 233
+    Linux 2.2.x
+    mdcrack 0.9.5
+    4 seconds
+    591 123
+	X
+    GNU C
+
+
+    Xeon 866
+    NT 4.0
+    mdcrack 0.8.5
+    2 seconds
+    1 767 430
+	X
+    Visual C++
+
+
+    Athlon 800
+    win 2000
+    mdcrack 0.8.5
+    5 seconds
+    1 646 366
+	X
+    Visual C++
+
+
+    PIII 733
+    win 95
+    mdcrack 0.8.5
+    2 seconds
+    1 490 394
+	X
+    Visual C++
+    
+
+    Athlon 600
+    win 98
+    mdcrack 0.8.5
+    20 seconds
+    1 225 914
+	X
+    Visual C++
+
+
+    PIII 500
+    linux 2.2.x
+    mdcrack 0.8
+    20 seconds
+    752 000
+	X
+    GNU C
+
+    
+    AMD K6 233
+    linux 2.2.x
+    mdcrack 0.8
+    17 seconds
+    492 000
+	X
+    GNU C
+
+
+    Ultra sparc II 450
+    solaris 8 64 bits
+    mdcrack 0.7
+    8 seconds
+    416 000
+	X
+    forte developer 6 update 1 (CC)
+
+
+    PIII 500
+    linux 2.2.x
+    mdcrack 0.4
+    8 seconds
+    427 000
+	X
+    GNU C
+
+
+    AMD K6 233
+    linux 2.2.x
+    mdcrack 0.4
+    17 seconds
+    217 122
+	X
+    GNU C
+
+
+    PIII 666
+    win32/cygnus
+    mdcrack 0.4
+    5 seconds
+    639 000
+	X
+    GNU C
+
+    
+    solaris 2.6
+    mdcrack 0.4
+    8 seconds
+    254 000
+	X
+    GNU	C 
+
+
+    Celeron 333
+    Cygnus/win32
+    mdcrack 0.4
+    16 seconds
+    215 000
+	X
+    
+
+    Celeron 333
+    win32
+    mdcrack 0.4
+    19 seconds
+    189 000
+	X
+
+
+    AMD K6 233
+    linux 2.2.x
+    mdcrack 0.3
+    21 seconds
+    179 302
+	X
+    GNU C
+
+  
+    PI 166
+    linux 2.2.x
+    mdcrack 0.1
+    75 seconds
+    76 910
+	X
+    GNU C
+
+  
+    AMD K6 233
+    linux 2.2.x
+    mdcrack 0.1
+    21 seconds
+    126 000
+	X
+    GNU C
+  
+  
+    PIII 500
+    linux 2.2.x
+    mdcrack 0.1
+    20 seconds
+    298 000
+	X
+    GNU C
+ 
+ 
+    PIII 666
+    win32/cygnus
+    mdcrack 0.1
+    20 seconds
+    397 458
+	X
+    GNU C
+
+  
+
+
+Thanks you.
+and "Have a nice day"
+ 
+Gregory Duchemin.

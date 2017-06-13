@@ -1,0 +1,120 @@
+
+
+MDcrack FAQ v1.0
+
+Please read it before giving me your questions, thank you.
+
+
+
+Q/ i have a windoz only and don't succeed in compiling mdcrack
+A/ Well mdcrack was primarly developped with a Linux and can be easily ported to other unix platforms while things are a bit more complicated with windows because of the lack of some standard functions and in the way windows handle signals nevetheless i did it without too much problem using DJGPP and so building a DOS version. The last win version made by Christophe Braud was in 8.5 release, guess it's time to go back in hell for 1.2.
+
+
+Q/ I have a shadow password file that use BSD style md5 hashes, how do i crack them with MDcrack ?
+A/ You simply can't ! at least till now because i have not yet implemented the MD5 based BSD crypt() function. For this purpose, i would rather recommend you to use john the ripper from Solar Designer, one among the fastest.
+John the ripper is located at http://www.openwall.net/john
+Note: i saw some web sites around claiming that mdcrack was a really good cracker ;-) ........ for BSD password files :-(
+Now there is a FAQ, so update the last comment only please :)
+
+
+Q/ Then, what am i supposed to crack with it ??
+A/ A lot of things, but preferably your own hashes ;). At this time, a bunch of applications are using MD5/MD4 hashes in a network authentication scheme. I recently discovered that hotmail messenger/APOP3 do. Then you can test your hashed passwords and see if you are vulnerable. By the way, the freshly added NTLM v1 module give you the possibility to test your NT server passwords as well.
+
+
+Q/ Where can i find more informations about these flawed authentication schemes ?
+A/ Well you have some explanations onto MDcrack Homepage located at: http://mdcrack.multimania.com and http://mdcrack.df.ru. There is here a proof of concept exploit for hotmail messenger too: sneaky.html
+
+
+Q/ How can i test my APOP3 or hotmail passwords ?
+A/ use a sniffer or sneaky.sh for hotmail and grab the server challenge, since these two services use a prepended challenge all you have to do is something like:
+mdcrack -b challenge -M MD5 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+-b prepend a challenge to the clear password before being hashed together.
+-e same but append it to the password.
+
+
+Q/ I would like to test the NTLM cores with my NT passwords, where can i get the needed hashes ?
+A/ In the sam file usually located in "{WINROOT}\system32\sam". I suggest you to use pwdump2.exe to grab a copy of the file in a clear form. The first hash after the username is a Lanmanager hash (weak) and the second one is this you want (NTLM).
+ 
+
+Q/ When i use -S x and NTLM1, mdcrack start with 2x password size ???
+A/ NTLM v1 use a unicode version of password before sending it to the MD4 generator, then passwords size are twice as big as their original size, each char is padded with a NULL byte in the little endian order whatever is the architecture used.
+
+
+Q/ And now, which options should i use ?
+A/ NTLM hashed passwords in Sam doesn't use any challenge, the command line needed is likely short:
+for instance : mdcrack -M NTLM1 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+if you already know the original password size then rather use
+mdcrack -M NTLM1 -S size xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx to avoid making useless comparaisons.
+
+
+Q/ I already know that mdcrack default charset doesn't match whith the password generator in use.
+A/ no problem, use -s and feed a new charset.
+
+
+Q/ What are -f -r and -F for ?
+A/ It's a special mode that use precomputed hashes from a file. You have first to generate a hashes file with -W and -F for fast mode and furtherly use it with -R. This mode is currently in a frozen state but might be unfreezed when time has come to start the cluster mode.
+
+
+Q/ I'm looking for collisions rather than just a password crack
+A/ no problem, mdcrack offers a -a option that give you all found collisions for an input hash but be awared that you may find time very long. Probability to find 2 collisions of a given input is 1/2^128. 
+
+Q/ I'm using a Big endian processor, what should i do before compiling ?
+A/ the simpliest way is to use ./install.sh and say it to compile in little endian otherwise try make big install.
+
+
+Q/ How fast is MDcrack ?
+A/ As far as i know, MDcrack is the fastest for these algorithms and is the result of a conjoint effort of optimization with Simeon Pilgrim. The main technic used here is commonly called "meet in the middle attack" and needed a lot of pain, headaches and coffee since it was necessary to design many cores to give the maximal performance for each configuration used (pass size, challenge size appended/prepended etc...). That's why you have core1 core1b core2 core2b core3 core3b for each algorithm.  
+
+
+Q/ I noticed some differences between prepended and appended challenge performances, why ?
+A/ Appended challenges should run faster since they use a twice hashes algorithm, two hashes are generated in the same time thus benefiting from the use of the L1 cpu cache. This is the case for NTLM passwords too.
+I'm currently working on saved states to make things going faster for prepended challenges but there will be many problems (boundary checking, multi cores...) to resolve, not speaking about headaches. Anyway it will be done.
+
+
+Q/ Why are performances so low in verbose modes ?
+A/ cause of additionnal function calls and write operations on the device.
+Never, never use any verbose mode during benchmarks, use bench.sh (Someone has already asked me why his performances was only 1/1000 these i claimed to have :) 
+
+
+Q/ I would like to share my benchmarks.
+A/ Great ! i need them, the merely thing you have to do is launching bench.sh and wait a few minutes, then the script will ask you if you agree to automatically send the report, just type yes.Thank you.
+All the benchs are regularly added to the homepage performance section. 
+
+
+Q/ What has been planned for the next releases ?
+A/ depending of my free time and not in order, NTLM v2 (based on MD5), a NTLM plugin for john the ripper, a dictionnay mode, a read hashes from file mode, a multi charset mode, MD2, MD-RIPE, SHA-1 etc...
+
+
+Q/ What is Ncurses interface for ?
+A/ for fun, i considere to make a gtk one, one day. If you don't like color, try comment NCURSE in the Makefile or just use ./install.sh and say no.
+
+
+Q/ I'm still not understanding what the hell is mdcrack designed for !
+A/ ....
+
+
+Q/ Why MDcrack ?
+A/ I wanted John instead but it was already used.
+
+
+Q/ What can i do to help you ?
+A/ Fine i need help for many things, translators for text files are welcome, if you can host a mirror it would be great, send me your benchmarks, if you have already worked on optimization for any hash algorithms and want to share your work it would be fine and finally if you are a windoz developper and want to live a hard time.... 
+
+
+Q/ I want to host a mirror, how can we do that ?
+A/ no problem, just give me an ftp access to your web site, i will do the rest.
+
+
+Q/ I have a question without answer 
+A/ I will update this Faq but in the meantime just leave me a message at c3rb3r@hotmail.com
+
+ 
+
+
+ 
+
+ 
+
+
+
+

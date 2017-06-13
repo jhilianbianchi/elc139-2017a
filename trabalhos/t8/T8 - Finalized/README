@@ -1,0 +1,117 @@
+
+
+============================
+    MDcrack, background
+============================
+
+
+MD5 is a one way hash algorithm providing a final 128 bits length hash  
+whatever was the original text length.  The resulting hash is often used 
+to sign a document thus giving a way to certify that the original content
+wasn't altered by a third party.  Today many applications (most of them
+are network oriented) use MD5 for authentication purpose avoiding any
+plain text password on the wire. In such a case, clients typically send    
+a password hash over the network to the server which in turn, make its own
+client password hash to compare the two hashes.  If they match together,
+the server considere the client know the good password and the
+authentication process is ended althought the server may be totaly wrong !
+MD5 can not theoricaly be reversed that is to say nobody can guess the   
+original text from its hash (even with little strings like passwords) but
+since the number of resulting hash is fixed (2^128), many strings will  
+give the same hash.  Surveys about the predictibility of such collisions 
+have never, till now, proved that somebody could arbitrary choose another
+text giving the same MD5 signature.  In the worst case, a third party may
+change the original text with something that has no signification at all
+and the well known birthday attack is easily defeated with some few
+precautions.  Nevertheless if a random collision is not really a problem
+for a letter that needs to have sense, it may be a valuable threat for a
+MD5 password authentication scheme.  Imagine that a user A authenticate 
+himself sending his hash on the wire to the server B while being sniffed
+by an attacker X who easily catch the hash.  Our attacker doesn't only  
+want the hash but need an original plain text password ( this is the case
+with the hotmail messenger vulnerability, I reported to bugtraq this month
+).  He doesn't actually need the same password but any collision that can 
+be typed from a real client.  If the chance are low for your password to  
+have a collision in the first hashes generation, the probability is not   
+null and the attacker can still bruteforce your original password.
+This is the purpose of MDcrack, it will give you any found collision in
+the range you will have previously defined and could be usefull to test
+the strongness of your password hash.  Because MD5 will always give the
+same result for a given input, user may easily compute every combinaison
+of a fixed password length in advance to do further collision search
+using egrep. For big password size, many cray and a lot of time should be
+useful ;)
+
+
+
+The mdcrack homepages are located at:
+====================================
+
+
+	>>     http://mdcrack.multimania.com     <<
+
+			    &
+
+              >>   http://mdcrack.df.ru   <<
+
+
+=================
+     Usage
+=================
+
+
+@    @ @@@@@   @@@ @@@@   @@   @@@ @  @
+@@  @@  @   @ @    @   @ @  @ @    @ @ 
+@ @@ @  @   @ @    @ @@  @@@@ @    @@@ 
+@    @ @@@@@   @@@ @   @ @  @  @@@ @  @
+
+MDCrack version 1.2 
+( Bruteforce your hashes )
+Usage: MDCrack [-h] [-r] [-d] [-W file -R file -F] [-t secs] [-v | -V] [-b string] [-e string] [-S size] [-a] [-s charset] [-M MD5/MD4] [digest] 
+-h : (h)elp, this text
+-r : (r)elease number
+-d : (d)elete any resume-file
+-W : file where to (W)rite all computed hashes
+-R : file where to (R)ead precomputed hashes from
+-F : (F)ast write (Hashes file is no longer human readable)
+-t : set benchmark mode (t)imer to secs seconds
+-v : set (v)erbose mode
+-V : more (V)erbose
+-b : passwords (b)egin with a challenge 
+-e : passwords (e)nd with a challenge 
+-S : minimal (S)ize to test passwords with 
+-a : find (a)ll collisions (won't stop to the first found)
+-s : feed a custom charset (s)tring for passwords
+-M : choose (M)D5, MD4 or NTLM1
+No option at all will force mdcrack to resume a previously stopped session
+
+Author: Gregory Duchemin 
+Email: c3rb3r@hotmail.com
+WWW: http://mdcrack.multimania.com
+WWW: http://mdcrack.df.ru
+Credit to Simeon Pilgrim for his fast MD5 algorithm
+
+*******************************************
+derived from the RSA Data Security Inc.
+MD5 Message-Digest Algorithm
+*******************************************
+
+
+
+
+
+================
+  Compilation
+================
+
+
+tar -zvxf mdcrack-0.X.tar.gz
+
+cd mdcrack
+
+make little/big <--- choose accordingly to your cpu endianness.
+make install    <--- install mdcrack & mdcrack-version in /usr/sbin
+make test       <--- test cores 1 in a limited charset (in the range [a-z0-9]{1,8}) with both MD4 and MD5
+make fulltest   <--- test all cores (all sizes) both in MD4, MD5 and NTLMv1 
+make bench      <--- perform a benchmark and collect various related data.
+

@@ -1,0 +1,13 @@
+
+Solaris and all others big endian based computers need user to specify the keyword ISBIG_ENDIAN at compilation time.
+To do so just type :
+
+#make big install
+or
+#install.sh and choose "big" when asked for it.
+
+This will create a binary for big endian and then, will automatically install it in /usr/sbin/mdcrack.
+This was successfully tested on Solaris 2.5.6 but should be ok the same way with AIX, Alfa ...
+
+Enjoy.
+

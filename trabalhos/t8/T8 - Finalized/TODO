@@ -1,0 +1,25 @@
+TODO
+====
+
+
+
+The next release will include:
+
+- NTLM v2 
+
+
+
+later, (not in order) 
+
+- A little network sniffer module to automaticaly catch on the fly every hashes. 
+- A BSD style password cracker to check your system passwords if u are already using MD5 for this purpose.
+Don't expect this mode to run as fast as the simple one since the crypt() C function consum a lot of time in many calculations before giving a result precisely to prevent this kind of bruteforce attack. Anyway, it should be fast enough to detect weak passwords. 
+
+- A simple dictionnary based attack mode, no word permutation, a simple checklist like a plaintext dictionnary (at least in a first time).
+
+- A man page 
+
+
+
+
+

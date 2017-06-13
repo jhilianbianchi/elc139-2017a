@@ -1,0 +1,12 @@
+
+Ncurses is not present in some systems by default, if u don't have it or just don't wish it,  desactivate it in the Makefile.
+Comment the two lines concerning Ncurses
+
+#NCURSES=-DNCURSES 
+
+#LDFLAGS=-lncurses
+
+If u are about to use Ncurses with a poorly featured terminal/non color terminal, u may do better by recompiling without ncurses otherwise the resulting screen might be somewhat weird.
+The real gain with the library merely reside in the presentation layer (color/animation/screen layout).
+However it's as u want, i prefer with. 
+

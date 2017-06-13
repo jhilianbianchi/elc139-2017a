@@ -1,0 +1,192 @@
+=================
+Version History
+=================
+
+
+Version 1.2
+
+==========================
+*NTLM v1 (based on MD4) has been added, use -M to switch Algorithms.
+*-r give the release number
+*-S offers to define a minimal size for passwords (not including challenges)
+*bench.sh, is a little shell script designed to automaticaly send your benchmarks to my mailbox, i recommend to use it rather than making benchs on you own.
+just try make bench
+*install.sh make compilation time easier.
+*Makefile was redesigned to be more explicit, specifically with big endian users
+*The resume file permissions have been changed to owner only read for security reasons.
+*A FAQ is available.
+
+
+Version 1.1
+
+==========================
+*This new release include the MD4 algorithm from RSA since many protocols are still using it.
+All options remain available with MD4.
+Benchs are faster with MD4 but don't actually reach what we are allowed to expect. An optimization process will begin soon.
+
+
+Version 1.0
+
+==========================
+*This version is faster, a speed increase of almost 30% on a PIII 500.
+The main reason is a new architecture, each case, function of wich options user has choosen, is now treated separatly and fully exploits its own optimization possibilities.
+For instance, every crack that don't use a prepended randomizer are using a new algorithm generating hashes two by two bringing a very noticable gain.
+These new cores are named core1 core1b core2 core2b core3 core3b and depends mainly on the maximal size of the password being cracked and randomizers type choosen (begin/end).
+To test all cores with only one command line, just type make fulltest.
+To see your maximal benchmark, type mdcrack -t 10..don't forget to send me your result ;)
+*I noticed some problem in the session resume option that seems to be specific to 0.9.5 and caused by recent modifications in the sources. It has been fixed.
+*I improved a bit the new ncurses based presentation, just type mdcrack -h with a ncurses mdcrack,
+*Mdcrack works nicely (and faster) on Big endian hosts (at least on my solaris). 
+
+
+
+
+
+Version 0.9.5
+
+==========================
+*Custom charsets are now systematically verified at session start to suppress any penalizing and useless char occurence.
+*Speed has been significantly increased once again, about 20% faster with the simple bruteforce mode.
+*Hashes file format is automatically recognized, mdcrack will break all session trying to read from incompatible file format.
+*A new message system give users more informations about what is going on. 
+*New curses features are available, giving a smarter interface, each level of message has its own color set, that is to say Warning, Error, System and Security levels.
+*The core is a bit more verbose during the session, annoncing the current password length in progress, however it's still better than nothing at all and by giving too much output it would impact overall performances.
+*Various minor bug fixes.
+ 
+
+
+Version 0.9
+
+==========================
+*The "Precomputed hashes in file" mode works fine, -R will ask mdcrack to read directly from the specified file. The read is done block per block, the size of a block is defined in the Makefile (expressed in MB) afterwhat mdcrack starts the comparison process between the input hash and all hashes present in one block of memory. Use a reasonable value of memory block (function of your total amount of hardware memory/disk speed/system load) to prevent disk swapping otherwise u take the risk to loose a lot of time and this way to loose all the gain against a standard calculation bruteforce. 
+Try different values of BLOCKSIZE and look at the statistical reports.
+The option -R starts a little disk read benchmark, it should have meaning only the first time u launch it for a given file cause of the system cache.
+Don't forget to use -F (fastmode) to read files made with this option, however for performance u should always use it both for read/write operations.
+Naturally, mdcrack will be slowed at each disk access while gaining a lot of time during the memory only work (about 3 200 000 hashes/sec on my little k6 233).
+In fact, with a judicious choice of BLOCKSIZE the process should perform faster against a standard bruteforce.
+
+Below is my output on a k6 233, 256 MB memory, BLOCKSIZE=50 MB, a UDMA 33 7200 tr/min 20 GB MAXTOR disk, Linux 2.4.0 and a 667 MB length hashes file.
+
+# mdcrack -W /tmp/hash -F $(md5 -stotot | awk -F "=" {'print $2'}) 
+CTRL-C
+
+=> /tmp/hash is 667 MB length in raw data.
+
+# mdcrack -R /tmp/hash -F $(md5 -saaaab | awk -F "=" {'print $2'})
+
+=> Disk read average speed = 10.9 MB/sec.
+=> 12 file blocks mounted in memory 
+=> statistics: 550 226 hashes/sec.
+
+# mdcrack $(md5 -saaaab | awk -F "=" {'print $2'})
+
+=> statictics: 481 325 hashes/sec.
+
+the gain is obvious but could change significantly depending once again, of the BLOCKSIZE value, your disk performance, the system load etc...
+My disk is not very fast, results with an U-Wide SCSI should be far better.
+
+The main and real problem IS how to stock all the hashes (for up to 8 chars length passwords) in a single file, on a single disk. It's NOT possible since the necessary storage space should be:
+
+for the standard charset: [a-zA-Z0-9] (64 chars)
+
+SIGMA(n=1 to 8) (64^n).(n+1+16)  bytes (in raw format -F ).
+
+that is to say a file of many terabytes chars length not within range of a common user with common financial ressource.
+Nevertheless this method should be efficient for 1 up to 5 chars length password crack on a single machine.
+I considere now to code a network based cluster mode that will use both standard bruteforce and precomputed hashes bruteforce to share disk ressource and why not over the net using thousands hosts disk space :)
+
+*Code has been debugged and sanitized once again 
+
+
+
+
+Version 0.8
+
+==========================
+*Simeon Pilgrim has shared his works on MD5, the new generator is twice as fast as before (100% !). Thanks to him for his very helpfull hand and valuable work on the topic. (more details will be available on the web soon)
+*-V/-v two verbosity level.
+*statistics was still incorrect in some case, the problem is now definitly closed by using a float type variable.
+*A symlink attack was possible playing with the RESUME_FILE if this one was in a public read/write directory (like /tmp), mdcrack will now check for any symlink before any RESUME_FILE creation. Anyway it's recommended to use a private directory and to configure the Makefile accordingly.
+*Dumps to screen and files are little_endian by default (Intel arch.),otherwise it's possible to change that in the Makefile.
+*minor optimizations in the code with a gain of 7.3% on my k6/233.
+*A bad segfault has been fixed. It occured when mdcrack was called with at least one option but without hash to crack.
+
+
+
+
+Version 0.7:
+
+==========================
+Always more options available.
+* -d will delete any old resume file, now defined in the Makefile.
+* Serious things are going now with option -W that write all hashes in a file and in a human readable form so that a simple egrep may be able to find a match among all precomputed hashes.
+* Generated files are really enormous and should quickly become useless with standard tools. -F like "Fast" will force every write operation to be in a raw form for further pattern-matching session with mdcrack. -F will increase general performance up to about 60% and will save a lot of disk space but bring compatibility problem between little and big endian architecture since hashes are written directly as integer.
+Note: the specific read-file module will be soon available in the next release.
+* Function ftime (deprecated) has been replaced by gettimeofday and possible compilation troubles on BSD4.3 based systems should be now corrected.
+* benchmark default hash is now defined in the Makefile.
+* minor bug fixes. 
+  
+
+
+Version 0.6:
+
+==========================
+* This version brings two new options -e & -b to append a fixed
+size string to the end/start of the clear password being tested,
+and thus in the same manner of most of authentication scheme
+around here.  Typically if the server first give to its client
+a random string to be appended, just catch it and try every hashes
+provided by the duo (password in test, string).
+
+Eg: if the server send the string 01333112.12121221 to be concatenated
+to the end of the user password before generating the hash **CLIENT HASH**,
+just try this:
+
+	# mdcrack -e 01333112.12121221 **CLIENT HASH**
+
+* A little bug in statistics has been fixed; it occured when
+test was less than 1 millisecond so without real serious impact.
+* A little bug in verbose mode, hashes are now correctly displayed to the screen.
+
+
+
+Version 0.5:
+
+==========================
+* A benchmark mode "-t secs" is now available, it performs a
+speed test during a customizable duration. Useful for bench
+report / comparisons and my usual source optimization sessions.
+
+
+
+Version 0.4:
+
+==========================
+* Complete optimization of the original rivest's  C implementation
+of the md5 generator
+* Other optimizations
+* Overall performance enhancement, about 50% faster
+* Makefile is more verbose
+* statistics when CTRL-C or ending a crack are more reliable, using a precision
+of one millisecond 
+* Bug fix: Statistics won't be no longer weird after less than 1 second of crack
+
+
+
+Version 0.3:
+
+==========================
+* Sources sanity check 
+* Various optimizations/bug fixes
+
+
+
+Version 0.2:
+
+==========================
+* When stopped with ctrl-c, any session will be automaticaly saved in a temp
+file /tmp/.mdcrack.resume to be continued later. While starting without option, 
+mdcrack now check for a temp file and will automatically resume a previously stopped session.
+This can be really useful for multiboot systems and/or "multidays" crack jobs.
+* option -h will show the help online.
+

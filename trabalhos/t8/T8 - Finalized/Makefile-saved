@@ -1,0 +1,363 @@
+#
+#
+# MDcrack Makefile
+#
+# Gregory Duchemin, 11 Feb 2001
+# c3rb3r@hotmail.com
+#
+#
+#
+
+
+
+CC = gcc
+
+# Please set RESUME_FILE and choose a secure place for the resume file 
+# before using mdcrack as root.
+# default is NOT secure and own an obvious race condition.
+# Nevertheless Mdcrack offer a protection against symlink attack style and will not create a resume file across a pre existing symlink.
+
+# BENCH_HASH corresponds to the default benchmark hash 
+# In fact i did not try it no more longer than 10 secs, however if 
+# it would collide too quickly for your tests, change it.
+ 
+# ALFA is the default charset string used to design passwords. 
+# We can still use a customized one with -s option on the command line.
+
+MDCRACK_OPTS=  -DRESUME_FILE="\"/tmp/.mdcrack-resume\"" -DBENCH_HASH="\"ffffffffffffffffffffffffffffffff\"" -DALFA="\"abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ\""
+
+# INF64 will determine if the designed passwords can be larger than a single 
+# MD5 block, this value include naturaly eventual randomizer string.
+# Performance are affected if u decide to try larger passwords that don't
+# fit into 64bits block.
+
+
+MDFLAGS= -DINF64=1
+
+
+# Just type, "make big", on BIG ENDIAN architectures if u don't want to catch ghosts instead of collisions.
+
+MDARCH= 
+
+
+# BLOCKSIZE in MB is used for file bufferization. The input file is read block by block in memory, set the value as high as possible accordingly to your system size (memory, system load, disk speed etc...).
+# UNIX users: Do not forget to check your actual disk configuration with hdparm and if not already done, switch ON 32 bits mode and DMA when possible.
+# #hdparm -c 1 -d 1 /dev/hd*
+
+BLOCK=-DBLOCKSIZE=50
+
+#full optimization
+CFLAGS =  -O3 -fforce-addr -funroll-loops -fomit-frame-pointer -ffast-math 
+
+
+
+# Ncurses, uncomment these 2 lines if you wish colors in your life.
+NCURSES=
+NCURSES=-DNCURSES 
+
+#LDFLAGS=
+LDFLAGS=-lncurses
+
+# Debugging 
+#DEBUG=
+DEBUG=-g
+
+default:
+	@echo
+	@echo "ok."
+	@echo
+	@echo "to build for little endian ---------- \"make little\""
+	@echo "to build for big endian ------------- \"make big\""
+	@echo "to build/install in little endian --- \"make little install\""
+	@echo "to build/install in big endian ------ \"make big install\""
+	@echo "to test ----------------------------- \"make test/fulltest\""
+	@echo "to benchmark ------------------------ \"make bench\""
+	@echo
+
+little:
+	@echo 
+	@echo "-*-*-*-*-*-*-*-*-*  NOTE  -*-*-*-*-*-*-*-*-*-*"
+	@echo
+	@echo "Compiling MDcrack for little endian processors."
+	@echo
+	@echo
+	@make bin/mdcrack 
+
+
+
+bin/mdcrack: src/coding.o src/NTLM1/core3.o src/NTLM1/core3b.o src/NTLM1/unicode.o src/MD4/core1b.o src/MD4/core2b.o src/MD4/core3b.o src/MD4/core1.o src/MD4/core2.o src/MD4/core3.o src/MD5/core1b.o src/MD5/core2b.o src/MD5/core3b.o src/MD5/core1.o src/MD5/core2.o src/MD5/core3.o src/title.o src/mdcrack.o src/stats.o src/mesgs.o src/hash.o src/charset.o
+	$(CC) $(LDFLAGS) -o bin/mdcrack src/coding.o src/NTLM1/core3.o src/NTLM1/core3b.o src/NTLM1/unicode.o src/MD4/core1b.o src/MD4/core2b.o src/MD4/core3b.o src/MD4/core1.o src/MD4/core2.o src/MD4/core3.o src/MD5/core1b.o src/MD5/core2b.o src/MD5/core3b.o src/MD5/core1.o src/MD5/core2.o src/MD5/core3.o src/title.o src/mesgs.o src/mdcrack.o src/stats.o  src/hash.o src/charset.o
+
+big:
+	@echo
+	@echo "-*-*-*-*-*-*-*-*-*  NOTE  -*-*-*-*-*-*-*-*-*-*"
+	@echo
+	@echo "Compiling MDcrack for big endian processors."
+	@echo
+	@echo
+	@make bin/mdcrack MDARCH="-DISBIG_ENDIAN=1"
+
+
+
+
+#MD5 files
+
+src/MD5/core1.o: src/MD5/generic.h src/MD5/core1.c 
+	$(CC)  -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/MD5/core1.c -o src/MD5/core1.o
+
+src/MD5/core2.o: src/MD5/generic.h src/MD5/core2.c 
+	$(CC)  -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/MD5/core2.c -o src/MD5/core2.o
+
+src/MD5/core3.o: src/MD5/generic.h src/MD5/core3.c 
+	$(CC)  -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/MD5/core3.c -o src/MD5/core3.o
+
+
+src/MD5/core1b.o: src/MD5/generic.h src/MD5/core1b.c
+	$(CC)  -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/MD5/core1b.c -o src/MD5/core1b.o
+
+src/MD5/core2b.o: src/MD5/generic.h src/MD5/core2b.c
+	$(CC)  -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/MD5/core2b.c -o src/MD5/core2b.o
+
+src/MD5/core3b.o: src/MD5/generic.h src/MD5/core3b.c
+	$(CC)  -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/MD5/core3b.c -o src/MD5/core3b.o
+
+
+
+#MD4 files
+
+src/MD4/core1.o: src/MD4/generic.h src/MD4/core1.c 
+	$(CC)  -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/MD4/core1.c -o src/MD4/core1.o
+
+src/MD4/core2.o: src/MD4/generic.h src/MD4/core2.c 
+	$(CC)  -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/MD4/core2.c -o src/MD4/core2.o
+
+src/MD4/core3.o: src/MD4/generic.h src/MD4/core3.c 
+	$(CC)  -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/MD4/core3.c -o src/MD4/core3.o
+
+
+src/MD4/core1b.o: src/MD4/generic.h src/MD4/core1b.c
+	$(CC)  -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/MD4/core1b.c -o src/MD4/core1b.o
+
+src/MD4/core2b.o: src/MD4/generic.h src/MD4/core2b.c
+	$(CC)  -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/MD4/core2b.c -o src/MD4/core2b.o
+
+src/MD4/core3b.o: src/MD4/generic.h src/MD4/core3b.c
+	$(CC)  -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/MD4/core3b.c -o src/MD4/core3b.o
+
+
+
+#NTLM files
+
+src/NTLM1/core3.o: src/NTLM1/generic.h src/NTLM1/core3.c 
+	$(CC) -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/NTLM1/core3.c -o src/NTLM1/core3.o
+
+src/NTLM1/core3b.o: src/NTLM1/generic.h src/NTLM1/core3b.c 
+	$(CC) -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/NTLM1/core3b.c -o src/NTLM1/core3b.o
+
+src/NTLM1/unicode.o: src/NTLM1/unicode.c
+	$(CC) -c $(DEBUG) $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/NTLM1/unicode.c -o src/NTLM1/unicode.o
+	
+
+
+
+
+#root files
+
+src/mdcrack.o: src/MD5/generic.h src/mdcrack.c src/NTLM1/unicode.c 
+	$(CC)  -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/mdcrack.c -o src/mdcrack.o
+
+
+src/coding.o: src/coding.c
+	$(CC)  -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/coding.c -o src/coding.o
+
+src/title.o: src/title.c 
+	$(CC)  -c $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) src/title.c -o src/title.o
+
+src/stats.o: src/stats.c
+	$(CC) -c $(MDFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(BLOCK) $(CFLAGS) $(MDARCH) src/stats.c -o src/stats.o
+
+src/mesgs.o: src/version.h src/mesgs.c
+	$(CC) -c $(MDFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(BLOCK) $(CFLAGS) $(MDARCH) src/mesgs.c -o src/mesgs.o
+
+src/hash.o: src/hash.c
+	$(CC) -c $(MDFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(BLOCK) $(CFLAGS) $(MDARCH) src/hash.c -o src/hash.o
+
+src/charset.o: src/charset.c
+	$(CC) -c $(MDFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(BLOCK) $(CFLAGS) $(MDARCH) src/charset.c -o src/charset.o
+
+
+
+
+#Following are here for bench purposes, these 3 tests give stats for 3 different password sizes and, BTW, 3 different levels of code optimization.
+#A challenge follows the password.
+
+
+core1:
+	@echo
+	@echo  "Core 1 (password <= 12) : Cracking \"hack\" string with [a-z0-9] charset."
+	@echo
+	bin/mdcrack -s abcdefghijklmnopqrstuvwxyz0123456789 d78b6f30225cdc811adfe8d4e7c9fd34 
+	bin/mdcrack -M MD4 -s abcdefghijklmnopqrstuvwxyz0123456789 c1f9e5db622135eaca09665555b308da 
+	@echo
+	@echo  "ok."
+	@echo
+
+core12:
+	@echo
+	@echo  "Core 1 with ending string (password <= 12) : Cracking \"bbbhack\" string with [a-z0-9] charset."
+	@echo
+	bin/mdcrack -e ack -s abcdefghijklmnopqrstuvwxyz0123456789 afd3256209cb976c40495ea15548faca   
+	bin/mdcrack -e ack -M MD4 -s abcdefghijklmnopqrstuvwxyz0123456789 0b3128de2dd2d37ea87cc4eaedde68e1   
+	@echo
+	@echo  "ok."
+	@echo
+
+
+core2:
+	@echo
+	@echo  "Core 2 with ending string (password <= 28) : Cracking \"bbbbbbbbbbbbbbbhack\" string with [a-z0-9] charset."
+	@echo
+	bin/mdcrack -e bbbbbbbbbbhack -s abcdefghijklmnopqrstuvwxyz0123456789  a22fcc8c0fbd42bc44c956ee64a93ef6    
+	bin/mdcrack -e bbbbbbbbbbhack -M MD4 -s abcdefghijklmnopqrstuvwxyz0123456789  18acb3389f68c92df3d0cd713ef3ab84    
+	@echo
+	@echo  "ok."
+	@echo
+
+
+
+core3:
+	@echo
+	@echo  "Core 3 with ending string (password <= 56) : Cracking \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbhack\" string with [a-z0-9] charset."
+	@echo
+	bin/mdcrack -e bbbbbbbbbbbbbbbbbbbbbbbhack -s abcdefghijklmnopqrstuvwxyz0123456789 e9a2926c5540d4a853f463e3fbc4aba7 
+	bin/mdcrack -e bbbbbbbbbbbbbbbbbbbbbbbhack -M MD4 -s abcdefghijklmnopqrstuvwxyz0123456789 f85cb507b9f0fb1f181854394892610a 
+	@echo
+	@echo  "ok."
+	@echo
+
+
+core1b:
+	@echo
+	@echo  "Core 1 with beginning string (password <= 12) : Cracking \"aaahack\" string with [a-z0-9] charset."
+	@echo
+	bin/mdcrack -b aaa -s abcdefghijklmnopqrstuvwxyz0123456789 16522beac358f4f75eafdda40180ff79 
+	bin/mdcrack -b aaa -M MD4 -s abcdefghijklmnopqrstuvwxyz0123456789 3a0d395696a13d7633de725746f7c164 
+	@echo
+	@echo  "ok."
+	@echo
+
+
+core1b2:
+	@echo
+	@echo  "Core 1 with beginning/ending string (password <= 12) : Cracking \"aaahack\" string with [a-z0-9] charset."
+	@echo
+	bin/mdcrack -b aa -e k -s abcdefghijklmnopqrstuvwxyz0123456789 16522beac358f4f75eafdda40180ff79
+	bin/mdcrack -b aa -M MD4 -e k -s abcdefghijklmnopqrstuvwxyz0123456789 3a0d395696a13d7633de725746f7c164 
+	@echo
+	@echo  "ok."
+	@echo
+
+
+core2b:
+	@echo
+	@echo  "Core 2 with beginning string (password <= 28) : Cracking \"aaaaaaaaaaaaaaahack\" string with [a-z0-9] charset."
+	@echo
+	bin/mdcrack -b aaaaaaaaaaaaaaa -s abcdefghijklmnopqrstuvwxyz0123456789 707d4f8220ed0b6980cf74c190e95186 
+	bin/mdcrack -b aaaaaaaaaaaaaaa -M MD4 -s abcdefghijklmnopqrstuvwxyz0123456789 ea5544cae8ac6fdfdc69a1fab32da03d 
+	@echo
+	@echo  "ok."
+	@echo
+
+
+core2b2:
+	@echo
+	@echo  "Core 2 with beginning/ending string (password <= 28) : Cracking \"aaaaaaaaaaaaaaahack\" string with [a-z0-9] charset."
+	@echo
+	bin/mdcrack -b aaaaaaaaaaaaaa -e k -s abcdefghijklmnopqrstuvwxyz0123456789 707d4f8220ed0b6980cf74c190e95186
+	bin/mdcrack -b aaaaaaaaaaaaaa -M MD4 -e k -s abcdefghijklmnopqrstuvwxyz0123456789 ea5544cae8ac6fdfdc69a1fab32da03d 
+	@echo
+	@echo  "ok."
+	@echo
+
+
+
+core3b:
+	@echo
+	@echo  "Core 3 with beginning string (password <= 56) : Cracking \"aaaaaaaaaaaaaaaaaaaaaaaaaaaahack\" string with [a-z0-9] charset."
+	@echo
+	bin/mdcrack -b aaaaaaaaaaaaaaaaaaaaaaaaaaaa -s abcdefghijklmnopqrstuvwxyz0123456789 6067f9a5081e0abadf5e01315f3dad17
+	bin/mdcrack -b aaaaaaaaaaaaaaaaaaaaaaaaaaaa -M MD4 -s abcdefghijklmnopqrstuvwxyz0123456789 c486a682f42e083e298677a4af6f62be 
+	@echo
+	@echo  "ok."
+	@echo
+
+
+core3b2:
+	@echo
+	@echo  "Core 3 with beginning/ending string (password <= 56) : Cracking \"aaaaaaaaaaaaaaaaaaaaaaaaaaaahack\" string with [a-z0-9] charset."
+	@echo
+	bin/mdcrack -b aaaaaaaaaaaaaaaaaaaaaaaaaaa -e k -s abcdefghijklmnopqrstuvwxyz0123456789 6067f9a5081e0abadf5e01315f3dad17
+	bin/mdcrack -b aaaaaaaaaaaaaaaaaaaaaaaaaaa -M MD4 -e k -s abcdefghijklmnopqrstuvwxyz0123456789 c486a682f42e083e298677a4af6f62be 
+	@echo
+	@echo  "ok."
+	@echo
+
+
+
+test: 
+	@make core1 
+
+
+fulltest:
+	@make core1
+	@make core12
+	@make core2
+	@make core3
+	@make core1b
+	@make core1b2
+	@make core2b
+	@make core2b2
+	@make core3b
+	@make core3b2 
+
+
+
+clean:
+	@echo
+	@echo -n "Cleaning binaries and useless files ..... "
+	@rm -f ./*.o ./*~ ./*# ./.#*  
+	@rm -f src/*.o src/*~ src/*# src/.#*  
+	@rm -f src/MD5/*.o src/MD5/*~ src/MD5/*# src/MD5/.#*  
+	@rm -f src/MD4/*.o src/MD4/*~ src/MD4/*# src/MD4/.#*
+	@rm -f src/NTLM1/*.o src/NTLM1/*~ src/NTLM1/*# src/NTLM1/.#*  
+	@rm -f bin/*~ bin/mdcrack bin/*# bin/.#*
+	@echo  "ok."
+	@echo
+
+install: 
+	@echo
+	@echo -n "Installing mdcrack in /usr/sbin/mdcrack ..... "
+	@cp bin/mdcrack /usr/sbin/mdcrack
+	@echo "ok."
+	@echo
+	@echo -n "Installing mdcrack-version in /usr/sbin/mdcrack-version ..... "
+	@echo $(CFLAGS) $(NCURSES) $(CPU) $(MDCRACK_OPTS) $(MDARCH) $(BLOCK) > /usr/sbin/mdcrack-version
+	@echo "ok."
+	@echo
+	@echo "-*-*-*-*-*-*-*-*-*-*-*-*-*-*-"
+	@echo "  I need your benchmarks !!"
+	@echo "-*-*-*-*-*-*-*-*-*-*-*-*-*-*-"
+	@echo
+	@echo "Just try: \"make bench\""
+	@echo "and accept to send the resulting report to my mailbox."
+	@echo
+	@echo "Have fun ! ;)"
+	@echo
+	@echo
+	@echo
+
+bench:
+	@echo
+	@./bench.sh	
+
+
